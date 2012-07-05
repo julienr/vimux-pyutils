@@ -1,4 +1,4 @@
-vimux-pyutils
+Vimux-pyutils
 =============
 
 This is a vim bundle containing some additional, python-specific, functions

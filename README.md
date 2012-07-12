@@ -6,8 +6,20 @@ on top of vimux :
 https://github.com/benmills/vimux/
 
 This plugin allow to select a block of python code in vim and send it to the
-vimux tmux split. The assumption is that ipython is running in said tmux split
-and this allow to execute a file chunk-by-chunk.
+vimux tmux split. The assumption is that ipython (or python) is running in said
+tmux split and this allow to execute a file chunk-by-chunk.
 
 This is somewhat similar to the code block execution that can be found in
 scientific software (for example Matlab).
+
+Difference with vim-ipython
+---------------------------
+Note that if you want more advanced integration with IPython (using the new
+multi-client architecture), there is the vim-ipython project :
+https://github.com/ivanov/vim-ipython/
+
+The main difference with vim-ipython is that this plugin simply emulate a paste
+as you would do it manually from vim to ipython. This allow to see the result
+of the execution directly in the ipython split whereas vim-ipython uses a
+separate vim buffer to show the results.
+

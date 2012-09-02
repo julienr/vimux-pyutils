@@ -12,6 +12,15 @@ tmux split and this allow to execute a file chunk-by-chunk.
 This is somewhat similar to the code block execution that can be found in
 scientific software (for example Matlab).
 
+Keys mapping
+-----------
+By default, the following mappings are enabled :
+
+* <C-c> will paste and execute the currently selected block in ipython
+* <C-b> will execute the current cell in ipython
+  A cell is similar to MATLAB's cell and is defined as the line ranging from
+  the previous ## to the next ##
+
 Difference with vim-ipython
 ---------------------------
 Note that if you want more advanced integration with IPython (using the new

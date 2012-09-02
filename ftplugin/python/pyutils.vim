@@ -60,3 +60,16 @@ endpython
 
 vmap <silent> <C-c> :python run_tmux_python_chunk()<CR>
 
+" This is to emulate MATLAB's cell mode
+" Cells are delimited by ##. Note that there should be a ## at the end of the
+" file
+" The :?##?;/##/ part creates a range with the following
+" ?##? search backwards for ##
+" Then ';' starts the range from the result of the previous search (##)
+" /##/ End the range at the next ##
+" See the doce on 'ex ranges' here :
+" http://tnerual.eriogerg.free.fr/vimqrc.html
+" Then, we simply call run_tmux_python_chunk that will run the range
+" of the current buffer
+noremap <silent> <C-b> :?##?;/##/ :python run_tmux_python_chunk()<CR>
+

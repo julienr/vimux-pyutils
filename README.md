@@ -16,8 +16,8 @@ Keys mapping
 -----------
 By default, the following mappings are enabled :
 
-* <C-c> will paste and execute the currently selected block in ipython
-* <C-b> will execute the current cell in ipython
+* *C-c* will paste and execute the currently selected block in ipython
+* *C-b* will execute the current cell in ipython
   A cell is similar to MATLAB's cell and is defined as the line ranging from
   the previous ## to the next ##
 

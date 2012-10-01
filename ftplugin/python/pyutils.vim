@@ -2,6 +2,10 @@ if !has('python')
   finish
 endif
 
+if !exists("g:vimux_pyutils_use_tslime")
+  let g:vimux_pyutils_use_tslime=0
+endif
+
 python << endpython
 import re
 
@@ -43,8 +47,15 @@ def run_tmux_python_chunk():
   #vim.command(':call VimuxRunCommand("\n--\n", 0)')
 
   # 2. With cpaste (better, only one command, but rely on system clipboard)
-  set_register('+', lines)
-  vim.command(':call VimuxRunCommand("%paste\n", 0)')
+
+  # Global variable can be used to switch between vimux and tslime
+  if vim.eval("g:vimux_pyutils_use_tslime") == "1":
+    vim.command(':call Send_to_Tmux("\%cpaste\n")')
+    vim.command(':call Send_to_Tmux("%s")' % lines)
+    vim.command(':call Send_to_Tmux("\n--\n")')
+  else:
+    set_register('+', lines)
+    vim.command(':call VimuxRunCommand("%paste\n", 0)')
 
   # 3. Directly send the raw text to vimux. This require that we add
   # indentation to blank lines : otherwise, this will break the input if

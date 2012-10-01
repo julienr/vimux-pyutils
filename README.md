@@ -21,6 +21,20 @@ By default, the following mappings are enabled :
   A cell is similar to MATLAB's cell and is defined as the line ranging from
   the previous ## to the next ##
 
+Options
+-------
+If you set *vimux_pyutils_use_tslime* to 1 in your vimrc, this script will use
+tslime instead of vimux. This has the advantage that the script will work
+from outside a tmux session (in GVim for example).
+
+Note that tslime has to be configured to target the correct session/pane :
+
+    let g:tmux_sessionname='0'
+    let g:tmux_windowname='./ipython.sh'
+    let g:tmux_panenumber='0'
+
+    let g:vimux_pyutils_use_tslime=1
+
 Difference with vim-ipython
 ---------------------------
 Note that if you want more advanced integration with IPython (using the new

@@ -67,6 +67,9 @@ def run_tmux_python_chunk():
   #   print 'bouh'
   # TODO:
 
+  # Move cursor to the end of the selection
+  vim.current.window.cursor=(r.end+1, 0)
+
 
 endpython
 

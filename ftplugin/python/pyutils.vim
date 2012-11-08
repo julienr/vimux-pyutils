@@ -70,7 +70,7 @@ def run_tmux_python_chunk():
   # Move cursor to the end of the selection
   vim.current.window.cursor=(r.end+1, 0)
 
-def run_tmux_python_cell():
+def run_tmux_python_cell(restore_cursor=False):
   """
   This is to emulate MATLAB's cell mode
   Cells are delimited by ##. Note that there should be a ## at the end of the
@@ -84,17 +84,21 @@ def run_tmux_python_cell():
   Then, we simply call run_tmux_python_chunk that will run the range
   of the current buffer
   """
-  # Save cursor position
-  (row, col) = vim.current.window.cursor
+  if restore_cursor:
+    # Save cursor position
+    (row, col) = vim.current.window.cursor
 
   # Run chunk on cell range
   vim.command(':?##?;/##/ :python run_tmux_python_chunk()')
 
-  # Restore cursor position
-  vim.current.window.cursor = (row, col)
+  if restore_cursor:
+    # Restore cursor position
+    vim.current.window.cursor = (row, col)
 
 endpython
 
 vmap <silent> <C-c> :python run_tmux_python_chunk()<CR>
-noremap <silent> <C-b> :python run_tmux_python_cell()<CR>
+noremap <silent> <C-b> :python run_tmux_python_cell(False)<CR>
+noremap <silent> <C-g> :python run_tmux_python_cell(True)<CR>
+
 

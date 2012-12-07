@@ -52,6 +52,7 @@ def run_tmux_python_chunk():
   if vim.eval("g:vimux_pyutils_use_tslime") == "1":
     vim.command(':call Send_to_Tmux("\%cpaste\n")')
     lines = lines.replace('"', '\\"')
+    lines = lines.replace('\\', '\\\\')
     vim.command(':call Send_to_Tmux("%s")' % lines)
     vim.command(':call Send_to_Tmux("\n--\n")')
   else:

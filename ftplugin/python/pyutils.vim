@@ -21,6 +21,7 @@ def run_tmux_python_chunk():
   without python complaining about indentation.
   """
   r = vim.current.range
+  #vim.command("echo 'Range : %i %i'" % (r.start, r.end))
   # Count indentation on first selected line
   firstline = vim.current.buffer[r.start]
   nindent = 0
@@ -29,12 +30,15 @@ def run_tmux_python_chunk():
       nindent += 1
     else:
       break
-  #vim.command("echo '%i'" % nindent)
+  # vim.command("echo '%i'" % nindent)
 
   # Shift the whole text by nindent spaces (so the first line has 0 indent)
   lines = vim.current.buffer[r.start:r.end+1]
-  pat = '\s'*nindent
-  lines = "\n".join([re.sub('^%s'%pat, '', l) for l in lines])
+  if nindent > 0:
+    pat = '\s'*nindent
+    lines = "\n".join([re.sub('^%s'%pat, '', l) for l in lines])
+  else:
+    lines = "\n".join(lines)
 
   # Add empty newline at the end
   lines += "\n\n"
@@ -53,7 +57,15 @@ def run_tmux_python_chunk():
     vim.command(':call Send_to_Tmux("\%cpaste\n")')
     lines = lines.replace('\\', '\\\\')
     lines = lines.replace('"', '\\"')
-    vim.command(':call Send_to_Tmux("%s")' % lines)
+    #vim.command("echo 'sending to tslime length : %i'"%len(lines))
+    # Tmux doesn't like big paste-buffer (the limit is somewhere between 2000
+    # and 3000 bytes).
+    bufsize = 2000
+    for i in xrange(0, len(lines), bufsize):
+        linepiece = lines[i:i+bufsize]
+        vim.command(':call Send_to_Tmux("%s")' % linepiece)
+
+    #vim.command(':call Send_to_Tmux("%s")' % lines)
     vim.command(':call Send_to_Tmux("\n--\n")')
   else:
     set_register('+', lines)

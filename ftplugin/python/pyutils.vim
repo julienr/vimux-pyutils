@@ -62,7 +62,7 @@ def run_tmux_python_chunk():
     # and 3000 bytes).
     bufsize = 2000
     for i in xrange(0, len(lines), bufsize):
-        linepiece = lines[i:i+bufsize]
+        linepiece = lines[i:min(len(lines), i+bufsize)]
         vim.command(':call Send_to_Tmux("%s")' % linepiece)
 
     #vim.command(':call Send_to_Tmux("%s")' % lines)

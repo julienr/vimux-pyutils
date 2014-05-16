@@ -13,6 +13,33 @@ import re
 def set_register(reg, value):
   vim.command("let @%s='%s'" % (reg, value.replace("'","''")))
 
+def send_to_tmux(lines):
+  # Global variable can be used to switch between vimux and tslime
+  if vim.eval("g:vimux_pyutils_use_tslime") == "1":
+    vim.command(':call Send_to_Tmux("\%cpaste\n")')
+    # Send by chunk of 20 lines
+    lines_step = 20
+    for i in xrange(0, len(lines), lines_step):
+      lines_chunk = lines[i:i+lines_step]
+      l = "\n".join(lines_chunk)
+      l = l.replace('\\', '\\\\')
+      l = l.replace('"', '\\"')
+
+      vim.command("echo 'sending to tslime length : %i'"%len(l))
+      vim.command(':call Send_to_Tmux("%s\\n")' % l)
+      # TODO: This is needed on some systems (OSX) to avoid getting scrambled
+      # output. But this is a bit of an ugly fix
+
+      # Sleep long enough to let the cpaste finish
+      vim.command(':sleep 200m')
+
+    vim.command(':call Send_to_Tmux("\n--\n")')
+  else:
+    l = "\n".join(lines)
+    set_register('+', l)
+    vim.command(':call VimuxRunCommand("%paste\n", 0)')
+
+
 def run_tmux_python_chunk():
   """
   Will copy/paste the currently selected block into the tmux split.
@@ -36,13 +63,12 @@ def run_tmux_python_chunk():
   lines = vim.current.buffer[r.start:r.end+1]
   if nindent > 0:
     pat = '\s'*nindent
-    lines = "\n".join([re.sub('^%s'%pat, '', l) for l in lines])
-  else:
-    lines = "\n".join(lines)
+    lines = [re.sub('^%s'%pat, '', l) for l in lines]
 
   # Add empty newline at the end
-  lines += "\n\n"
+  lines.append('\n\n')
 
+  send_to_tmux(lines)
   # Now, there are multiple solutions to copy that to tmux
 
   # 1. With cpaste
@@ -51,34 +77,6 @@ def run_tmux_python_chunk():
   #vim.command(':call VimuxRunCommand("\n--\n", 0)')
 
   # 2. With cpaste (better, only one command, but rely on system clipboard)
-
-  # Global variable can be used to switch between vimux and tslime
-  if vim.eval("g:vimux_pyutils_use_tslime") == "1":
-    vim.command(':call Send_to_Tmux("\%cpaste\n")')
-    lines = lines.replace('\\', '\\\\')
-    lines = lines.replace('"', '\\"')
-    #vim.command("echo 'sending to tslime length : %i'"%len(lines))
-    # Tmux doesn't like big paste-buffer (the limit is somewhere between 2000
-    # and 3000 bytes).
-    bufsize = 2000
-    for i in xrange(0, len(lines), bufsize):
-        linepiece = lines[i:i+bufsize]
-        vim.command(':call Send_to_Tmux("%s")' % linepiece)
-
-    #vim.command(':call Send_to_Tmux("%s")' % lines)
-    vim.command(':call Send_to_Tmux("\n--\n")')
-  else:
-    set_register('+', lines)
-    vim.command(':call VimuxRunCommand("%paste\n", 0)')
-
-  # 3. Directly send the raw text to vimux. This require that we add
-  # indentation to blank lines : otherwise, this will break the input if
-  # we have something like :
-  # def foo():
-  #   print 'blah'
-  #                          <--- Shit will happen here
-  #   print 'bouh'
-  # TODO:
 
   # Move cursor to the end of the selection
   vim.current.window.cursor=(r.end+1, 0)

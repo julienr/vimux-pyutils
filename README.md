@@ -1,6 +1,8 @@
 Vimux-pyutils
 =============
 
+**See https://github.com/julienr/vim-cellmode for new version of this plugin.**
+
 This is a vim bundle containing some additional, python-specific, functions
 on top of vimux :
 https://github.com/benmills/vimux/
